@@ -1,0 +1,81 @@
+Эта строка включает в себя необходимые заголовочные файлы Qt для создания графического пользовательского интерфейса и доступа к базе данных PostgreSQL.
+
+cpp
+
+int main(int argc, char *argv[]) {
+    Приложение QApplication(argc, argv);
+
+Эта строка инициализирует объект QApplication, который управляет циклом событий приложения.
+
+cpp
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
+    db.setHostName("локальный хост");
+    db.setPort(5432);
+    db.setDatabaseName("mydb");
+    db.setUserName("имя пользователя");
+    db.SetPassword("пароль");
+
+Эти строки создают объект QSqlDatabase и задают его свойства для подключения к базе данных PostgreSQL. Мы устанавливаем имя хоста на localhost, порт - на 5432, имя базы данных - на mydb, а имя пользователя и пароль - на username и password соответственно.
+
+cpp
+
+    if (!db.open()) {
+        QMessageBox::critical(nullptr, "Ошибка базы данных", db.lastError().text());
+        возврат 1;
+    }
+
+В этой строке предпринята попытка открыть соединение с базой данных. Если это не удается, мы выводим сообщение об ошибке с помощью виджета QMessageBox и возвращаем ненулевой код выхода, указывающий на ошибку.
+
+cpp
+
+    Вход в QDialog;
+    login.setWindowTitle("Вход в систему");
+
+    QLabel* usernameLabel = новая QLabel("Имя пользователя:");
+    QLineEdit* usernameLineEdit = новый QLineEdit();
+    QHBoxLayout* usernameLayout = новый QHBoxLayout();
+    usernameLayout->addWidget(usernameLabel);
+    usernameLayout->addWidget(usernameLineEdit);
+
+    QLabel* passwordLabel = новая QLabel("Пароль:");
+    QLineEdit* passwordLineEdit = новый QLineEdit();
+    passwordLineEdit->setEchoMode(QLineEdit::Пароль);
+    QHBoxLayout* passwordLayout = новый QHBoxLayout();
+    passwordLayout->addWidget(passwordLabel);
+    passwordLayout->addWidget(passwordLineEdit);
+
+    QPushButton* LoginButton = новая QPushButton("Вход в систему");
+    QHBoxLayout* buttonLayout = новый QHBoxLayout();
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(кнопка входа в систему);
+
+    QVBoxLayout* layout = новый QVBoxLayout();
+    layout->addLayout(usernameLayout);
+    layout->addLayout(passwordLayout);
+    layout->addLayout(buttonLayout);
+    login.setLayout(макет);
+
+Эти строки создают объект QDialog для отображения формы входа с виджетом QLineEdit для ввода имени пользователя и пароля и QPushButton для отправки регистрационной информации. Мы создаем виджеты, макеты и устанавливаем свойства для виджетов по мере необходимости. Затем мы добавляем виджеты в макеты и устанавливаем макет для QDialog.
+
+cpp
+
+    QObject::подключиться(LoginButton, &QPushButton::нажата, [&] {
+        QString username = usernameLineEdit->text();
+        QString password = passwordLineEdit->текст();
+        db.setUserName(имя пользователя);
+        db.SetPassword(пароль);
+        if (!db.open()) {
+            QMessageBox::critical(nullptr, "Ошибка базы данных", db.lastError().text());
+        } еще {
+            login.accept();
+        }
+    });
+
+Эта строка соединяет сигнал нажатия кнопки QPushButton с лямбда-функцией, которая обновляет объект QSqlDatabase введенными именем пользователя и паролем и пытается открыть соединение с базой данных. Если соединение не удается установить, мы выводим сообщение об ошибке. Если подключение прошло успешно, мы закрываем форму входа с помощью функции accept.
+
+cpp
+
+    if (login.exec() != QDialog::Принято) {
+        return 0;
+    }
